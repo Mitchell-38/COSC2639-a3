@@ -165,10 +165,3 @@ function getImage($s3Client, $bucket, $key) {
 
     return $results['Body']->__toString();
 }
-
-$names = importNames("names.json");
-$s3Bucket = $names["s3BucketName"];
-$beanstalkApplicationName = $names["ElasticBeanstalkApplicationName"];
-$beanstalkEnvironmentName = $names["ElasticBeanstalkEnvironmentName"];
-$iamRole = $names["IamRole"];
-$mapReduceBucketName = $names["mapReduceBucketName"];

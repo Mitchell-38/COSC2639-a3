@@ -60,7 +60,7 @@ try {
                 //"ResourceName" => $iamRole,
                 "Value" => "EMR_EC2_DefaultRole"
             ]
-            ],
+        ],
         "SolutionStackName" => "64bit Amazon Linux 2 v3.5.1 running PHP 8.1",
     ]);
 
@@ -75,32 +75,31 @@ try {
         "Bucket" => $s3BucketName,
         "Key" => "Deploy/Code.zip"
     ]);
-
 } catch (S3Exception $e) {
-    echo $e->getMessage(). "<br><br>";
+    echo $e->getMessage() . "<br><br>";
 
     $s3Client->putObject([
         "Bucket" => $s3BucketName,
         "Key" => "Deploy/Code.zip",
         "Body" => file_get_contents("Deploy/Code.zip")
     ]);
-    
+
     echo "Source code uploaded.";
-}   
+}
 
 // Create Beanstalk version from S3
 try {
-$result = $beanstalkClient->createApplicationVersion([
-    "ApplicationName" => $ebsAppName,
-    "AutoCreateApplication" => true,
-    "Description" => "A3 Submission",
-    "Process" => true,
-    "SourceBundle" => [
-        "S3Bucket" => $s3BucketName,
-        "S3Key" => "Deploy/Code.zip"
-    ],
-    "VersionLabel" => "1.1"
-]);
+    $result = $beanstalkClient->createApplicationVersion([
+        "ApplicationName" => $ebsAppName,
+        "AutoCreateApplication" => true,
+        "Description" => "A3 Submission",
+        "Process" => true,
+        "SourceBundle" => [
+            "S3Bucket" => $s3BucketName,
+            "S3Key" => "Deploy/Code.zip"
+        ],
+        "VersionLabel" => "1.0"
+    ]);
 
     echo "Running version uploaded <br><br>";
 } catch (ElasticBeanstalkException $e) {
@@ -157,10 +156,8 @@ try {
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "Deploy/getPosts.zip
-",
-            "Body" => file_get_contents("Deploy/getPosts.zip
-")
+            "Key" => "Deploy/getPosts.zip",
+            "Body" => file_get_contents("Deploy/getPosts.zip")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
@@ -175,51 +172,41 @@ try {
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "Deploy/postToForum.zip
-",
-            "Body" => file_get_contents("Deploy/postToForum.zip
-")
+            "Key" => "Deploy/postToForum.zip",
+            "Body" => file_get_contents("Deploy/postToForum.zip")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
     try {
         $results = $s3Client->getObject([
             "Bucket" => $s3BucketName,
-            "Key" => "Deploy/addUser.zip
-"
+            "Key" => "Deploy/addUser.zip"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "Deploy/addUser.zip
-",
-            "Body" => file_get_contents("Deploy/addUser.zip
-")
+            "Key" => "Deploy/addUser.zip",
+            "Body" => file_get_contents("Deploy/addUser.zip")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
     try {
         $results = $s3Client->getObject([
             "Bucket" => $s3BucketName,
-            "Key" => "Deploy/getPostUsernames.zip
-"
+            "Key" => "Deploy/getPostUsernames.zip"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "Deploy/getPostUsernames.zip
-",
-            "Body" => file_get_contents("Deploy/getPostUsernames.zip
-")
+            "Key" => "Deploy/getPostUsernames.zip",
+            "Body" => file_get_contents("Deploy/getPostUsernames.zip")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
-
-
 }
 // Map Reduce S3 setup
 try {
@@ -228,7 +215,6 @@ try {
         "ACL" => "public-read"
     ]);
     echo "Map Reduce Bucket Created.<br><br>";
-
 } catch (S3Exception $e) {
     echo $e->getMessage() . "<br><br>";
 } finally {
@@ -248,7 +234,6 @@ try {
         ]);
         echo "Post Count Jar file uploaded.<br><br>";
     }
-
 }
 
 //DynamoDB 
@@ -334,8 +319,7 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "Deploy/getPosts.zip
-"
+            "S3Key" => "Deploy/getPosts.zip"
         ],
         "EphemeralStorage" => [
             "Size" => 512
@@ -355,8 +339,7 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "Deploy/postToForum.zip
-"
+            "S3Key" => "Deploy/postToForum.zip"
         ],
         "EphemeralStorage" => [
             "Size" => 512
@@ -376,8 +359,7 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "Deploy/addUser.zip
-"
+            "S3Key" => "Deploy/addUser.zip"
         ],
         "EphemeralStorage" => [
             "Size" => 512
@@ -396,8 +378,7 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "Deploy/getPostUsernames.zip
-"
+            "S3Key" => "Deploy/getPostUsernames.zip"
         ],
         "EphemeralStorage" => [
             "Size" => 512
