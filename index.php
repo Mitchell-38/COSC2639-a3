@@ -73,7 +73,7 @@ try {
 try {
     $s3Client->getObject([
         "Bucket" => $s3BucketName,
-        "Key" => "Code.zip"
+        "Key" => "Deploy/Code.zip"
     ]);
 
 } catch (S3Exception $e) {
@@ -81,8 +81,8 @@ try {
 
     $s3Client->putObject([
         "Bucket" => $s3BucketName,
-        "Key" => "Code.zip",
-        "Body" => file_get_contents("Code.zip")
+        "Key" => "Deploy/Code.zip",
+        "Body" => file_get_contents("Deploy/Code.zip")
     ]);
     
     echo "Source code uploaded.";
@@ -97,7 +97,7 @@ $result = $beanstalkClient->createApplicationVersion([
     "Process" => true,
     "SourceBundle" => [
         "S3Bucket" => $s3BucketName,
-        "S3Key" => "Code.zip"
+        "S3Key" => "Deploy/Code.zip"
     ],
     "VersionLabel" => "1.1"
 ]);
@@ -134,75 +134,87 @@ try {
     try {
         $results = $s3Client->getObject([
             "Bucket" => $s3BucketName,
-            "Key" => "getUser.zip"
+            "Key" => "Deploy/getUser.zip"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "getUser.zip",
-            "Body" => file_get_contents("getUser.zip")
+            "Key" => "Deploy/getUser.zip",
+            "Body" => file_get_contents("Deploy/getUser.zip")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
     try {
         $results = $s3Client->getObject([
             "Bucket" => $s3BucketName,
-            "Key" => "getPosts.zip"
+            "Key" => "Deploy/getPosts.zip
+"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "getPosts.zip",
-            "Body" => file_get_contents("getPosts.zip")
+            "Key" => "Deploy/getPosts.zip
+",
+            "Body" => file_get_contents("Deploy/getPosts.zip
+")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
     try {
         $results = $s3Client->getObject([
             "Bucket" => $s3BucketName,
-            "Key" => "postToForum.zip"
+            "Key" => "Deploy/postToForum.zip
+"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "postToForum.zip",
-            "Body" => file_get_contents("postToForum.zip")
+            "Key" => "Deploy/postToForum.zip
+",
+            "Body" => file_get_contents("Deploy/postToForum.zip
+")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
     try {
         $results = $s3Client->getObject([
             "Bucket" => $s3BucketName,
-            "Key" => "addUser.zip"
+            "Key" => "Deploy/addUser.zip
+"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "addUser.zip",
-            "Body" => file_get_contents("addUser.zip")
+            "Key" => "Deploy/addUser.zip
+",
+            "Body" => file_get_contents("Deploy/addUser.zip
+")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
     try {
         $results = $s3Client->getObject([
             "Bucket" => $s3BucketName,
-            "Key" => "getPostUsernames.zip"
+            "Key" => "Deploy/getPostUsernames.zip
+"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
             "Bucket" => $s3BucketName,
-            "Key" => "getPostUsernames.zip",
-            "Body" => file_get_contents("getPostUsernames.zip")
+            "Key" => "Deploy/getPostUsernames.zip
+",
+            "Body" => file_get_contents("Deploy/getPostUsernames.zip
+")
         ]);
         echo "Lambda code uploaded<br><br>";
     }
@@ -232,7 +244,7 @@ try {
         $s3Client->putObject([
             "Bucket" => $mapReduceBucketName,
             "Key" => "code/PostCount.jar",
-            "Body" => file_get_contents("EMR/PostCount.jar")
+            "Body" => file_get_contents("Deploy/PostCount.jar")
         ]);
         echo "Post Count Jar file uploaded.<br><br>";
     }
@@ -301,7 +313,7 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "getUser.zip"
+            "S3Key" => "Deploy/getUser.zip"
         ],
         "EphemeralStorage" => [
             "Size" => 512
@@ -322,7 +334,8 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "getPosts.zip"
+            "S3Key" => "Deploy/getPosts.zip
+"
         ],
         "EphemeralStorage" => [
             "Size" => 512
@@ -342,7 +355,8 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "postToForum.zip"
+            "S3Key" => "Deploy/postToForum.zip
+"
         ],
         "EphemeralStorage" => [
             "Size" => 512
@@ -362,7 +376,8 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "addUser.zip"
+            "S3Key" => "Deploy/addUser.zip
+"
         ],
         "EphemeralStorage" => [
             "Size" => 512
@@ -381,7 +396,8 @@ try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
             "S3Bucket" => $s3BucketName,
-            "S3Key" => "getPostUsernames.zip"
+            "S3Key" => "Deploy/getPostUsernames.zip
+"
         ],
         "EphemeralStorage" => [
             "Size" => 512
