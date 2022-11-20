@@ -6,15 +6,33 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 require __DIR__ . "/vendor/autoload.php";
 
+$s3BucketName = "s3858182-a3-storage";
+$ebsAppName = "A3";
+$ebsEnvName = "A3-env";
+$iamRole = "arn:aws:iam::583718258586:role/LabRole";
+$mapReduceBucketName = "s3858182-a3-emr";
+
+use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\ElasticBeanstalk\ElasticBeanstalkClient;
 use Aws\ElasticBeanstalk\Exception\ElasticBeanstalkException;
+use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
 use Aws\Lambda\Exception\LambdaException;
-use Aws\DynamoDb\DynamoDbClient;
-use Aws\S3\S3Client;
 use Aws\Iam\IamClient;
 use Aws\Emr\EmrClient;
+
+$sharedConfig = [
+    'region' => 'us-east-1',
+    'version' => 'latest'
+];
+
+$sdk = new Aws\Sdk($sharedConfig);
+$ddbClient = $sdk->createDynamoDb();
+$lambdaClient = $sdk->createLambda();
+$s3Client = $sdk->createS3();
+$beanstalkClient = $sdk->createElasticBeanstalk();
+$emrClient = $sdk->createEmr();
 
 // Service # 1 ELASTIC BEANSTALK
 
@@ -54,7 +72,7 @@ try {
 // Upload application code to S3. 
 try {
     $s3Client->getObject([
-        "Bucket" => $s3Bucket,
+        "Bucket" => $s3BucketName,
         "Key" => "Code.zip"
     ]);
 
@@ -62,7 +80,7 @@ try {
     echo $e->getMessage(). "<br><br>";
 
     $s3Client->putObject([
-        "Bucket" => $s3Bucket,
+        "Bucket" => $s3BucketName,
         "Key" => "Code.zip",
         "Body" => file_get_contents("Code.zip")
     ]);
@@ -78,7 +96,7 @@ $result = $beanstalkClient->createApplicationVersion([
     "Description" => "A3 Submission",
     "Process" => true,
     "SourceBundle" => [
-        "S3Bucket" => $s3Bucket,
+        "S3Bucket" => $s3BucketName,
         "S3Key" => "Code.zip"
     ],
     "VersionLabel" => "1.1"
@@ -105,21 +123,24 @@ try {
 // Other Services
 // S3
 try {
-    createBucket($s3Client, $s3Bucket);
+    $results = $s3Client->createBucket([
+        "Bucket" => $s3BucketName,
+        "ACL" => "public-read"
+    ]);
     echo "S3 Bucket Created.<br><br>";
 } catch (S3Exception $e) {
     echo $e->getMessage() . "<br><br>";
 } finally {
     try {
         $results = $s3Client->getObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "getUser.zip"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "getUser.zip",
             "Body" => file_get_contents("getUser.zip")
         ]);
@@ -127,14 +148,14 @@ try {
     }
     try {
         $results = $s3Client->getObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "getPosts.zip"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "getPosts.zip",
             "Body" => file_get_contents("getPosts.zip")
         ]);
@@ -142,14 +163,14 @@ try {
     }
     try {
         $results = $s3Client->getObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "postToForum.zip"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "postToForum.zip",
             "Body" => file_get_contents("postToForum.zip")
         ]);
@@ -157,14 +178,14 @@ try {
     }
     try {
         $results = $s3Client->getObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "addUser.zip"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "addUser.zip",
             "Body" => file_get_contents("addUser.zip")
         ]);
@@ -172,14 +193,14 @@ try {
     }
     try {
         $results = $s3Client->getObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "getPostUsernames.zip"
         ]);
     } catch (S3Exception $e) {
         echo $e->getMessage() . "<br><br>";
 
         $s3Client->putObject([
-            "Bucket" => $s3Bucket,
+            "Bucket" => $s3BucketName,
             "Key" => "getPostUsernames.zip",
             "Body" => file_get_contents("getPostUsernames.zip")
         ]);
@@ -190,7 +211,10 @@ try {
 }
 // Map Reduce S3 setup
 try {
-    createBucket($s3Client, $mapReduceBucketName);
+    $results = $s3Client->createBucket([
+        "Bucket" => $mapReduceBucketName,
+        "ACL" => "public-read"
+    ]);
     echo "Map Reduce Bucket Created.<br><br>";
 
 } catch (S3Exception $e) {
