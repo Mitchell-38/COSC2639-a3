@@ -39,7 +39,7 @@ $emrClient = $sdk->createEmr();
 // Create Application
 try {
     $results = $beanstalkClient->CreateApplication([
-        "ApplicationName" => "A3"
+        "ApplicationName" => $ebsAppName
     ]);
 
     echo "Application created" . "<br><br>";
@@ -50,8 +50,8 @@ try {
 // Create Environment
 try {
     $results = $beanstalkClient->createEnvironment([
-        "ApplicationName" => "A3",
-        "EnvironmentName" => "A3-env",
+        "ApplicationName" => $ebsAppName,
+        "EnvironmentName" => $ebsEnvName,
         "OperationsRole" => $iamRole,
         "OptionSettings" => [
             [
@@ -91,7 +91,7 @@ try {
 // Create Beanstalk version from S3
 try {
 $result = $beanstalkClient->createApplicationVersion([
-    "ApplicationName" => "A3",
+    "ApplicationName" => $ebsAppName,
     "AutoCreateApplication" => true,
     "Description" => "A3 Submission",
     "Process" => true,
@@ -110,10 +110,10 @@ $result = $beanstalkClient->createApplicationVersion([
 // Deploy Beanstalk application
 try {
     $result = $beanstalkClient->updateEnvironment([
-        "ApplicationName" => "A3",
+        "ApplicationName" => $ebsAppName,
         "Description" => "A3 Submission",
-        "EnvironmentName" => "A3-env",
-        "VersionLabel" => "1.1"
+        "EnvironmentName" => $ebsEnvName,
+        "VersionLabel" => "1.0"
     ]);
     echo "Application version deployed.<br><br>";
 } catch (ElasticBeanstalkException $e) {
@@ -300,7 +300,7 @@ try {
 try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
-            "S3Bucket" => $s3Bucket,
+            "S3Bucket" => $s3BucketName,
             "S3Key" => "getUser.zip"
         ],
         "EphemeralStorage" => [
@@ -321,7 +321,7 @@ try {
 try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
-            "S3Bucket" => $s3Bucket,
+            "S3Bucket" => $s3BucketName,
             "S3Key" => "getPosts.zip"
         ],
         "EphemeralStorage" => [
@@ -341,7 +341,7 @@ try {
 try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
-            "S3Bucket" => $s3Bucket,
+            "S3Bucket" => $s3BucketName,
             "S3Key" => "postToForum.zip"
         ],
         "EphemeralStorage" => [
@@ -361,7 +361,7 @@ try {
 try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
-            "S3Bucket" => $s3Bucket,
+            "S3Bucket" => $s3BucketName,
             "S3Key" => "addUser.zip"
         ],
         "EphemeralStorage" => [
@@ -380,7 +380,7 @@ try {
 try {
     $results = $lambdaClient->CreateFunction([
         "Code" => [
-            "S3Bucket" => $s3Bucket,
+            "S3Bucket" => $s3BucketName,
             "S3Key" => "getPostUsernames.zip"
         ],
         "EphemeralStorage" => [
